@@ -1,85 +1,9 @@
 阅读下面的额代码
 <?php 
 
-class mmi_QuickImport_IandcCalculation{
+class  {
 
-    protected $_config;
-    protected $_handler;
-    protected $_snapshot;
-    public  $limit_contract = 50;
-    
-    protected $_array_return = array();
-    protected $stock = array();
 
-    public function __construct($config = array())
-    {
-        $this->_config = $config;
-        $this->_handler = new mmi_DataIntegration_Handler($config);
-        $this->_snapshot = new DataSnapshot();
-    }
-  
-
-     public function process_values($contracts_id=0, $charge_type = 0)
-       {
-       	$values = new StaticCost();
-    	$year_values = $values->fetchRow("contracts_id = '{$contracts_id}' and charge_type = '{$charge_type}'");
-    	
-    	
-        $proces_value = mmi_DataIntegration_Type_IandCFunc();
-    	$total_contract_value = $process_value->customer_total_contract_value($contracts_id);
-    	
-    	$total_static_cost = $proces_value->tcc($contracts_id);
-    	$tcc = $total_static_cost[0]['tc_cost']; 
-    	
-    	
-	// block taking care of dynamic prices
-		$dyn_price =  $proces_value->dynamic_price($contracts_id,$charge_type);
-    	$dyn_count = count($dyn_price);
-		
-		$total_dyn_price = 0;
-		for($counter = 0; $counter < $dyn_count;  $counter++)
-			$total_dyn_price += 	$dyn_price[$counter]['count'];
-			
-			
-		$total_dyn_price_stop_5 = 0;
-		for($counter = 0; $counter < 5;  $counter++)
-			$total_dyn_price_stop_5 += 	$dyn_price[$counter]['count'];
-	
-		
-		$total_dyn_price_plus = 0;
-		if($dyn_count > 5)
-			$total_dyn_price_plus = $total_dyn_price - $total_dyn_price_stop_5;
-	
-		for($Index=0; $index<4; $index++)
-			$dyn_year_ . ($index + 1) = $dyn_price[$index]['count'];
-		/*		
-		$dyn_year_1 = $dyn_price[0]['count'];
-		$dyn_year_2 = $dyn_price[1]['count'];
-		$dyn_year_3 = $dyn_price[2]['count'];
-		$dyn_year_4 = $dyn_price[3]['count'];
-		$dyn_year_5 = $dyn_price[4]['count'];
-		*/
-		$TotalCV =  $total_dyn_price_stop_5 + $total_dyn_price_plus;
-		
-		$dynamic_year = array();
-		for($Index=0; $index<4; $index++)
-		{
-			$dyn_year_ . ($index + 1) = (empty($dyn_year_ . ($index + 1)))? 0: $dyn_year_ .($index + 1);
-			$dynamic_year[$index] = $dyn_year_ . ($index + 1);
-			
-		}
-		
-		//$dyn_year_6  = (empty($dyn_year_5))? 0: $dyn_year_6;
-		$dynamic_year[$dyn_year_6] = empty($dyn_year_5))? 0: $dyn_year_6;
-
-		/*
-		$dyn_year_1  = (empty($dyn_year_1))? 0: $dyn_year_1;
-		$dyn_year_2  = (empty($dyn_year_2))? 0: $dyn_year_2;
-		$dyn_year_3  = (empty($dyn_year_3))? 0: $dyn_year_3;
-		$dyn_year_4  = (empty($dyn_year_4))? 0: $dyn_year_4;
-		$dyn_year_5  = (empty($dyn_year_5))? 0: $dyn_year_5;
-		$dyn_year_6  = (empty($dyn_year_5))? 0: $dyn_year_6;
-       	*/
        	
 		return $dynamic_year;
        }
